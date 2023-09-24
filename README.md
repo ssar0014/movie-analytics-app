@@ -26,4 +26,4 @@ Exercise:
 
 ### System Architecture
 
-![System Architecture][static/system_architecture.png]
+![System Architecture](static/system_architecture.png)
