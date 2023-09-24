@@ -37,3 +37,13 @@ class MinioUtils:
             )
         except S3Error as e:
             print(e)
+
+    def download_from_storage(self, obj_name):
+        found = self.minioClient.bucket_exists(self.bucket_name)
+        if found:
+            try:
+                response = self.minioClient.get_object(self.bucket_name, obj_name)
+                response = eval(response.data)
+                return response
+            except S3Error as e:
+                print(e)
