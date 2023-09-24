@@ -22,3 +22,8 @@ Exercise:
 6. The goal of the test is to allow you to present your best code that you feel proud off.
 7. Feel free to make and document any assumptions you have made.
 8. The API token provided to you should not be exposed to the public.
+
+
+### System Architecture
+
+![System Architecture][static/system_architecture.png]
