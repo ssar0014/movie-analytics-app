@@ -13,7 +13,7 @@ class MinioUtils:
         self.secret_key = secret_key
         self.secure = secure
         self.minioClient = Minio(
-            "0.0.0.0:9000",
+            "minio:9000",
             access_key=self.access_key,
             secret_key=self.secret_key,
             secure=False,
@@ -24,13 +24,13 @@ class MinioUtils:
         if not found:
             self.minioClient.make_bucket(self.bucket_name)
 
-        json_data = json.dumps(json_data)  # Replace with your JSON data
+        json_data = json.dumps(json_data)
         object_name = obj_name
 
         try:
             self.minioClient.put_object(
                 self.bucket_name,
-                prefix + "/" + object_name,
+                prefix + object_name,
                 io.BytesIO(json_data.encode("utf-8")),
                 len(json_data),
                 content_type="application/json",
@@ -47,3 +47,9 @@ class MinioUtils:
                 return response
             except S3Error as e:
                 print(e)
+
+
+if __name__ == "__main__":
+    minioObj = MinioUtils("datalake", "user", "password")
+    a = {"1": 1, "2": 2}
+    minioObj.upload_to_storage(a, "aaa", "a.json")

@@ -47,12 +47,12 @@ if cinemaworld_conn and filmworld_conn:
             with col1:
                 st.header(":orange[Cheapest Movie:]")
                 st.write(f"{cw_cheapest_dict['title']}")
-                image = Image.open("./images/attackOfTheClones.jpg")
+                image = Image.open("./attackOfTheClones.jpg")
                 st.image(image)
             with col2:
                 st.header(":orange[Cheapest Movie Provider (Director):]")
                 st.write(f"{cw_cheapest_dict['director']}")
-                image = Image.open("./images/george_lucas.jpg")
+                image = Image.open("./george_lucas.jpg")
                 st.image(image)
             with col3:
                 st.header(":orange[Price :moneybag: :]")

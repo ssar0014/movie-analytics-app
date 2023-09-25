@@ -88,7 +88,7 @@ class DashboardUtils:
                 for idx, json_data in enumerate(all_movies_df.values):
                     movie_id = json_data[-1]
                     movie_pricing_data = self.get_pricing_data(dbname, movie_id)
-                    prefix = f"movie_data/{dbname}"
+                    prefix = f"movie_data/{dbname}/"
                     object_name = movie_id + ".json"
                     minioUtilsObj.upload_to_storage(
                         json_data=movie_pricing_data,
