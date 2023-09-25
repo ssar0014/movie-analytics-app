@@ -72,25 +72,3 @@ class ApiPoller:
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}")
             return None
-
-
-# manual testing
-if __name__ == "__main__":
-    # load in the environment variables
-    load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
-    api_token = os.environ.get("API_TOKEN")
-    api_url = os.environ.get("API_URL")
-
-    # these are the 2 databases
-    db_names = ["cinemaworld", "filmworld"]
-
-    # Define the headers with the authentication token
-    apiPollerObj = ApiPoller(base_url=api_url, auth_token=api_token)
-
-    # get all movies
-    response = apiPollerObj.get_all_movies(database=db_names[0])
-    print(response)
-
-    # get a specific movie
-    response = apiPollerObj.get_movie_data(database=db_names[0], movie_id="0121766")
-    print(response)

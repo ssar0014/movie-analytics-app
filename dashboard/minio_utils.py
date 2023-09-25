@@ -13,13 +13,13 @@ class MinioUtils:
         self.secret_key = secret_key
         self.secure = secure
         self.minioClient = Minio(
-            "localhost:9000",
+            "0.0.0.0:9000",
             access_key=self.access_key,
             secret_key=self.secret_key,
             secure=False,
         )
 
-    def upload_to_storage(self, json_data, obj_name):
+    def upload_to_storage(self, json_data, prefix, obj_name):
         found = self.minioClient.bucket_exists(self.bucket_name)
         if not found:
             self.minioClient.make_bucket(self.bucket_name)
@@ -30,7 +30,7 @@ class MinioUtils:
         try:
             self.minioClient.put_object(
                 self.bucket_name,
-                object_name,
+                prefix + "/" + object_name,
                 io.BytesIO(json_data.encode("utf-8")),
                 len(json_data),
                 content_type="application/json",
@@ -43,7 +43,7 @@ class MinioUtils:
         if found:
             try:
                 response = self.minioClient.get_object(self.bucket_name, obj_name)
-                response = eval(response.data)
+                response = eval(response.data)  # convert bytes object to dictionary
                 return response
             except S3Error as e:
                 print(e)

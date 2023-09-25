@@ -1,58 +1,71 @@
-from minio_utils import MinioUtils
-from analytics import AnalyticsService
 import os
+from PIL import Image
 import streamlit as st
-import requests
 from dotenv import load_dotenv
+from dashboard_utils import DashboardUtils
 
 load_dotenv(os.path.join(os.path.dirname(__file__), "../.env"))
 minio_access_key = os.environ.get("MINIO_ACCESS_KEY")
 minio_secret_key = os.environ.get("MINIO_SECRET_KEY")
+flask_base_url = os.environ.get("FLASK_BASE_URL")
 
 st.title("Movie Information App")
 st.markdown("_Working Prototype v0.1_")
 
-cinemaworld_conn = st.toggle("Connect to the Cinemaworld DB")
+# Connect and fetch data from the cinemaworld database
+cinemaworld_conn = st.toggle("Find Movies On The Cinemaworld Database")
+filmworld_conn = st.toggle("Find Movies On The Filmworld Database")
+
 if cinemaworld_conn:
     st.info("Connected to the Cinemaworld DB", icon="ℹ️")
-    api_endpoint = "http://127.0.0.1:5000/get_all_movies/cinemaworld"
+    dashboardUtilsObj = DashboardUtils(base_url=flask_base_url)
 
-    # Function to make API call
-    def get_movies():
-        retries = 0
-        max_retries = 10
-        while retries < max_retries:
-            response = requests.get(api_endpoint)
-            if response.status_code == 200:
-                return response.json()
-            elif response.status_code == 500:
-                retries += 1
-            else:
-                return {
-                    "error": f"Error fetching data. Status code: {response.status_code}"
-                }
+    st.info("Extract Data from the Cinemaworld Database", icon="ℹ️")
+    cw_cheapest_dict = dashboardUtilsObj.on_activate(
+        minio_access_key=minio_access_key,
+        minio_secret_key=minio_secret_key,
+        dbname="cinemaworld",
+    )
 
-    # Button to call API
-    if st.button("Extract Data from the Cinemaworld Database"):
-        # initialize the minio helper object
-        minioUtilsObj = MinioUtils(
-            bucket_name="datalake",
-            access_key=minio_access_key,
-            secret_key=minio_secret_key,
-        )
-        with st.spinner("Fetching Data..."):
-            # call the flask api
-            movies = get_movies()
-        st.success("Done!")
-        object_name = "all_movies.json"
-        minioUtilsObj.upload_to_storage(json_data=movies, obj_name=object_name)
-        st.info(
-            f"JSON response uploaded to {minioUtilsObj.bucket_name}/{object_name} successfully.",
-            icon="ℹ️",
-        )
-        analyticsObj = AnalyticsService(
-            file_name=object_name,
-            minio_access_key=minio_access_key,
-            minio_secret_key=minio_secret_key,
-        )
-        st.dataframe(analyticsObj.create_dataframe_from_json())
+# Connect and fetch data from the filmworld database
+if filmworld_conn:
+    st.info("Connected to the Filmworld DB", icon="ℹ️")
+    dashboardUtilsObj = DashboardUtils(base_url=flask_base_url)
+
+    st.info("Extract Data from the Filmworld Database", icon="ℹ️")
+    fw_cheapest_dict = dashboardUtilsObj.on_activate(
+        minio_access_key=minio_access_key,
+        minio_secret_key=minio_secret_key,
+        dbname="filmworld",
+    )
+
+if cinemaworld_conn and filmworld_conn:
+    st.header("**Overall Cheapest Movie and Director Across Both Databases...**")
+    if cw_cheapest_dict["price"] < fw_cheapest_dict["price"]:
+        with st.container():
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.header(":orange[Cheapest Movie:]")
+                st.write(f"{cw_cheapest_dict['title']}")
+                image = Image.open("./images/attackOfTheClones.jpg")
+                st.image(image)
+            with col2:
+                st.header(":orange[Cheapest Movie Provider (Director):]")
+                st.write(f"{cw_cheapest_dict['director']}")
+                image = Image.open("./images/george_lucas.jpg")
+                st.image(image)
+            with col3:
+                st.header(":orange[Price :moneybag: :]")
+                st.write(f"{cw_cheapest_dict['price']}")
+    else:
+        with st.container():
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.header(":orange[Cheapest Movie:]")
+                st.write(f"{fw_cheapest_dict['title']}")
+            with col2:
+                st.header(":orange[Cheapest Movie Provider (Director):]")
+                st.write(f"{fw_cheapest_dict['director']}")
+            with col3:
+                st.header(":orange[Price :moneybag: :]")
+                st.write(f"{fw_cheapest_dict['price']}")
