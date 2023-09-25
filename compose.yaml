@@ -7,6 +7,8 @@ services:
     ports:
       - "9000:9000" # API port
       - "9001:9001" # Console port
+    networks:
+      - deploy_network
     env_file:
       - ./.env
     command: server /data --console-address :9001 # startup command
@@ -17,13 +19,16 @@ services:
       - minio
     env_file:
       - ./.env
+    networks:
+      - deploy_network
     entrypoint: >
       /bin/sh -c "/usr/bin/mc alias set minio-s3 http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY}; /usr/bin/mc mb minio-s3/datalake/; /usr/bin/mc anonymous set public minio-s3/datalake; exit 0;"
-
   flask-app:
     build: ./api_polling_service/
     ports:
       - "5000:5000"
+    networks:
+      - deploy_network
     env_file:
       - ./.env
     depends_on:
@@ -34,9 +39,15 @@ services:
     build: ./dashboard/
     ports:
       - "8501:8501"
+    networks:
+      - deploy_network
     env_file:
       - ./.env
     depends_on:
       - minio
       - createbucket
       - flask-app
+
+networks:
+  deploy_network:
+    driver: bridge
