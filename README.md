@@ -1,6 +1,6 @@
 # Webjet API Test - Code Repository
 
-`Please make sure that ports 5000, 8501, 9000 and 9001 are free on your system for the application to run.`
+`Please make sure that ports 5000, 8502, 9000 and 9001 are free on your system for the application to run.`
 
 
 ### System Architecture
