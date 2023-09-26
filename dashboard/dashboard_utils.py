@@ -108,11 +108,17 @@ class DashboardUtils:
             st.dataframe(all_movies_df_pricing)
 
         st.markdown(f"**Found Cheapest Movie and Director from {dbname}...**")
-        cheapest_dict = analyticsObj.find_cheapest(all_movies_df_pricing)
-        st.write(f":orange[Cheapest Movie:] {cheapest_dict['title']}")
-        st.write(
-            f":orange[Cheapest Movie Provider (Director):] {cheapest_dict['director']}"
-        )
-        st.write(f":orange[Price :moneybag: :] {cheapest_dict['price']}")
+        cheapest_dict_movie = analyticsObj.find_cheapest_movie(all_movies_df_pricing)
+        st.write(f":orange[Cheapest Movie:] {cheapest_dict_movie['title']}")
+        st.write(f":orange[Price :moneybag: :] {cheapest_dict_movie['price']}")
 
-        return cheapest_dict
+        st.markdown(f"**Found Cheapest Director from {dbname}...**")
+        cheapest_dict_director = analyticsObj.find_cheapest_director(
+            all_movies_df_pricing
+        )
+        st.write(
+            f":orange[Cheapest Movie Provider (Director):] {cheapest_dict_director['director']}"
+        )
+        st.write(f":orange[Price :moneybag: :] {cheapest_dict_director['price']}")
+
+        return (cheapest_dict_movie, cheapest_dict_director)

@@ -48,13 +48,23 @@ class AnalyticsService:
         self.df.Price = self.df.Price.astype(float)
         return self.df
 
-    def find_cheapest(self, df_obj):
+    def find_cheapest_movie(self, df_obj):
         df_obj = df_obj.sort_values(by="Price", ascending=True, ignore_index=True)
-        print(df_obj)
         # cheapest movie and director will be at the top of the dataframe now
         # so we can just return that
         cheapest_obj = {
             "title": df_obj.Title[0],
+            "price": df_obj.Price[0],
+        }
+        return cheapest_obj
+
+    def find_cheapest_director(self, df_obj):
+        # we have grouped by directors and taken the sum of their prices
+        # this will give us the cumulative price of each director
+        # we can then sort it and get the cheapest director
+        df_obj = df_obj.groupby("Director")["Price"].sum().reset_index()
+        df_obj = df_obj.sort_values(by="Price", ignore_index=True)
+        cheapest_obj = {
             "director": df_obj.Director[0],
             "price": df_obj.Price[0],
         }

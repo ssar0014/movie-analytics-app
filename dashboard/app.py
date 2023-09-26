@@ -21,7 +21,7 @@ if cinemaworld_conn:
     dashboardUtilsObj = DashboardUtils(base_url=flask_base_url)
 
     st.info("Extract Data from the Cinemaworld Database", icon="ℹ️")
-    cw_cheapest_dict = dashboardUtilsObj.on_activate(
+    cw_cheapest_movie, cw_cheapest_dir = dashboardUtilsObj.on_activate(
         minio_access_key=minio_access_key,
         minio_secret_key=minio_secret_key,
         dbname="cinemaworld",
@@ -33,39 +33,52 @@ if filmworld_conn:
     dashboardUtilsObj = DashboardUtils(base_url=flask_base_url)
 
     st.info("Extract Data from the Filmworld Database", icon="ℹ️")
-    fw_cheapest_dict = dashboardUtilsObj.on_activate(
+    fw_cheapest_movie, fw_cheapest_dir = dashboardUtilsObj.on_activate(
         minio_access_key=minio_access_key,
         minio_secret_key=minio_secret_key,
         dbname="filmworld",
     )
 
 if cinemaworld_conn and filmworld_conn:
-    st.header("**Overall Cheapest Movie and Director Across Both Databases...**")
-    if cw_cheapest_dict["price"] < fw_cheapest_dict["price"]:
+    st.header("**Overall Cheapest Movie Across Both Databases...**")
+    if cw_cheapest_movie["price"] < fw_cheapest_movie["price"]:
         with st.container():
-            col1, col2, col3 = st.columns(3)
+            col1, col2 = st.columns(2)
             with col1:
                 st.header(":orange[Cheapest Movie:]")
-                st.write(f"{cw_cheapest_dict['title']}")
+                st.write(f"{cw_cheapest_movie['title']}")
                 image = Image.open("./attackOfTheClones.jpg")
                 st.image(image)
             with col2:
-                st.header(":orange[Cheapest Movie Provider (Director):]")
-                st.write(f"{cw_cheapest_dict['director']}")
-                image = Image.open("./george_lucas.jpg")
-                st.image(image)
-            with col3:
                 st.header(":orange[Price :moneybag: :]")
-                st.write(f"{cw_cheapest_dict['price']}")
+                st.write(f"{cw_cheapest_movie['price']}")
     else:
         with st.container():
-            col1, col2, col3 = st.columns(3)
+            col1, col2 = st.columns(2)
             with col1:
                 st.header(":orange[Cheapest Movie:]")
-                st.write(f"{fw_cheapest_dict['title']}")
+                st.write(f"{fw_cheapest_movie['title']}")
+
             with col2:
-                st.header(":orange[Cheapest Movie Provider (Director):]")
-                st.write(f"{fw_cheapest_dict['director']}")
-            with col3:
                 st.header(":orange[Price :moneybag: :]")
-                st.write(f"{fw_cheapest_dict['price']}")
+                st.write(f"{fw_cheapest_movie['price']}")
+
+    st.header("**Overall Cheapest Director Across Both Databases...**")
+    if cw_cheapest_dir["price"] < fw_cheapest_dir["price"]:
+        with st.container():
+            col1, col2 = st.columns(2)
+            with col1:
+                st.header(":orange[Cheapest Movie Provider (Director):]")
+                st.write(f"{cw_cheapest_dir['director']}")
+            with col2:
+                st.header(":orange[Price :moneybag: :]")
+                st.write(f"{cw_cheapest_dir['price']}")
+    else:
+        with st.container():
+            col1, col2 = st.columns(2)
+            with col1:
+                st.header(":orange[Cheapest Movie Provider (Director):]")
+                st.write(f"{fw_cheapest_dir['director']}")
+            with col2:
+                st.header(":orange[Price :moneybag: :]")
+                st.write(f"{fw_cheapest_dir['price']}")
