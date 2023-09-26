@@ -49,9 +49,34 @@ Upon toggling a database, the following workflow takes place:
 4. Stores each movie's data as a separate file, in its respective directory within the datalake
 5. Computes cheapest movie and director
 
+![Toggle Both](static/cheapest.png)
+
+You can also toggle both to compare the prices of movies and directors across both the databases.
+
+
+### Flask API
+
+The Flask API is available at `localhost:5000`
+
+It acts as an api gateway between the dashboard application and the external API.
+
+
+### Minio Data Storage
+
+The data storage/data lake is hosted on Minio. 
+
+The GUI/Console is available at `localhost:9001`, and the API to use it is available at `localhost:9000`
+
+In order to login to the console, you will need to use the access keys provided in the .env file.
+
+![Data Storage Console Login](static/minio_login.png)
+
+
+![Data Storage Bucket](static/minio_bucket_storage.png)
 
 
 
+![Data Storage Partitions](static/minio_bucket_storage_partitions.png)
 
 ### System Architecture
 
