@@ -1,4 +1,13 @@
-# Webjet API Test - Code Repository
+# Full Stack Data Engineering Code Repo
+
+### Goal
+The primary goal of this project is to similate a real world data pipeline, wherein external data is captured through an API and made available to be used by a downstream application (in this case a dashboard)
+
+There are 3 main components for this to be as close to a real data pipeline as possible:
+1. There needs to be a data source that is flakey, and as such the system should be able to handle that flakiness
+2. There needs to be a data store/data lake where raw data comes in, and is then processed by an ETL proccess
+3. There needs to be an application at the end which consumed processed data and exposes it to the end user.
+
 
 ### Key Assumptions:
 1. I do not know the business context behind the term - "Movie Provider"; As such I have assumed that to mean the Director of the movie, as they are the primary ones responsible for providing the movie
@@ -7,7 +16,6 @@
 4. Since I have assumed no real relation between the 2 databases, I have given the user the freedom to choose which database they want to check movie prices in. I have also given them the option to compare the cheapest movie from `cinemaworld` against the cheapest movie from `filmworld` if they so choose. That would technically be the cheapest movie overall.
 5. Similarly for the director as well.  
 
-
 `Please make sure that ports 5000, 8502, 9000 and 9001 are free on your system for the application to run.`
 
 In order to run the application please use the following docker commands:
@@ -15,13 +23,17 @@ In order to run the application please use the following docker commands:
 `docker compose build`
 `docker compose up -d`
 
-There are 3 components to this application:
+As discussed above there are 3 components to this application:
 
-* Frontend Streamlist Dashboard
-* Backend Flask API Gateway
-* Minio Data Storage
+* Frontend Streamlist Dashboard - which is the end-user application
+* Backend Flask API Gateway - which is the data gathering source for our application
+* Minio Data Storage - which acts as our data store/data lake where ETL processes occur
 
 Once you start up the services through `docker-compose` they should spin up and be available to use.
+
+### System Architecture
+
+![System Architecture](static/system_architecture.png)
 
 
 ### Streamlit Dashboard
@@ -77,7 +89,3 @@ In order to login to the console, you will need to use the access keys provided 
 
 
 ![Data Storage Partitions](static/minio_bucket_storage_partitions.png)
-
-### System Architecture
-
-![System Architecture](static/system_architecture.png)
